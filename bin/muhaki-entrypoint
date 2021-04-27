@@ -4,6 +4,15 @@ set -euo pipefail
 # Support for old password variable
 [[ -n "${PASSWORD:-}" ]] && MUHAKI_CODE_PASSWORD="$PASSWORD"
 
+# Generate code-server yaml
+echo "auth: $MUHAKI_CODE_AUTH
+bind-addr: $MUHAKI_CODE_BIND_ADDR
+cert: false
+disable-telemetry: true
+extensions-dir: ${MUHAKI_CODE_CONFIG}/extensions
+password: $MUHAKI_CODE_PASSWORD
+user-data-dir: ${MUHAKI_CODE_CONFIG}/data" > "$MUHAKI_CODE_CONFIG"/config.yaml
+
 
 # Start code-server
 code-server /home/muhaki
