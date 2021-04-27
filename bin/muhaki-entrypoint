@@ -4,6 +4,55 @@ set -euo pipefail
 # Support for old password variable
 [[ -n "${PASSWORD:-}" ]] && MUHAKI_CODE_PASSWORD="$PASSWORD"
 
+# Copy code directory/configs if it doesn't exist
+if [[ ! -d /home/muhaki/.config ]]; then
+    mkdir -p /home/muhaki/.config
+    cp -r "$MUHAKI_CONFIG"/code-server /home/muhaki/.config
+fi
+
+# Copy ctop settings if it doesn't exist
+if [[ ! -f /home/muhaki/.ctop ]]; then
+    cp "$MUHAKI_CONFIG"/ctop /home/muhaki/.ctop
+fi
+
+# Update oh-my-zsh
+MUHAKI_ZSHRC_CHECK="$(cat < /home/muhaki/.zshrc)"
+if [[ "$MUHAKI_ZSHRC_CHECK" != *"source \"\$MUHAKI_CONFIG\""* ]]; then
+    sed -i "s|source \$ZSH/oh-my-zsh.sh|source \"\$MUHAKI_CONFIG\"/.muhakirc\nsource \$ZSH/oh-my-zsh.sh|g" /home/muhaki/.zshrc
+fi
+
+# Remove export GPG_TTY
+if [[ "$MUHAKI_ZSHRC_CHECK" == *"export GPG_TTY"* ]]; then
+    sed -i "/export GPG_TTY/d" /home/muhaki/.zshrc
+fi
+
+# Move zsh-autosuggestions
+if [[ -d /home/muhaki/.oh-my-zsh/plugins/zsh-autosuggestions ]]; then
+    mv /home/muhaki/.oh-my-zsh/plugins/zsh-autosuggestions /home/muhaki/.oh-my-zsh/custom/plugins
+fi
+
+# Move autoupdate
+if [[ -d /home/muhaki/.oh-my-zsh/plugins/autoupdate ]]; then
+    mv /home/muhaki/.oh-my-zsh/plugins/autoupdate /home/muhaki/.oh-my-zsh/custom/plugins
+fi
+
+# Clone autoupdate if not available
+if [[ ! -d /home/muhaki/.oh-my-zsh/custom/plugins/autoupdate ]]; then
+    git clone https://github.com/TamCore/autoupdate-oh-my-zsh-plugins.git /home/muhaki/.oh-my-zsh/custom/plugins/autoupdate
+fi
+
+# Check for font-family
+MUHAKI_SETTINGS_CHECK="$(cat < "$MUHAKI_CODE_CONFIG"/data/User/settings.json)"
+if [[ "$MUHAKI_SETTINGS_CHECK" != *"MesloLGS NF"* ]]; then
+    sed -i "s|\"editor.quickSuggestions\": true,|\
+    \"editor.fontFamily\": \"'MesloLGS NF', Menlo, Monaco, 'Courier New', monospace\",\n\
+    \"editor.quickSuggestions\": true,|g" "$MUHAKI_CODE_CONFIG"/data/User/settings.json
+fi
+
+# Migrate old configs to new directory
+[[ -d /home/muhaki/.code/data ]] && mv /home/muhaki/.code/data "$MUHAKI_CODE_CONFIG"
+[[ -d /home/muhaki/.code/extensions ]] && mv /home/muhaki/.code/extensions "$MUHAKI_CODE_CONFIG"
+
 # Generate code-server yaml
 echo "auth: $MUHAKI_CODE_AUTH
 bind-addr: $MUHAKI_CODE_BIND_ADDR
