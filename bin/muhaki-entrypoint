@@ -1,4 +1,6 @@
 #!/bin/bash
+# Muhaki
+# https://novusweb.dk
 set -euo pipefail
 
 # Support for old password variable
@@ -49,9 +51,9 @@ set -euo pipefail
 #     \"editor.quickSuggestions\": true,|g" "$MUHAKI_CODE_CONFIG"/data/User/settings.json
 # fi
 
-# # Migrate old configs to new directory
-# [[ -d /home/muhaki/.code/data ]] && mv /home/muhaki/.code/data "$MUHAKI_CODE_CONFIG"
-# [[ -d /home/muhaki/.code/extensions ]] && mv /home/muhaki/.code/extensions "$MUHAKI_CODE_CONFIG"
+# Migrate old configs to new directory
+[[ -d /home/muhaki/.code/data ]] && mv /home/muhaki/.code/data "$MUHAKI_CODE_CONFIG"
+[[ -d /home/muhaki/.code/extensions ]] && mv /home/muhaki/.code/extensions "$MUHAKI_CODE_CONFIG"
 
 # Generate code-server yaml
 echo "auth: $MUHAKI_CODE_AUTH

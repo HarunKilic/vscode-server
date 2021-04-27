@@ -56,23 +56,19 @@ RUN set -ex; \
 RUN set -ex; \
   # Create muhaki user
   adduser --gecos '' --disabled-password muhaki; \
-  \
   # Update .bashrc
   echo 'PS1="$(whoami)@\h:\w \$ "' > /home/muhaki/.bashrc; \
   echo 'PS1="$(whoami)@\h:\w \$ "' > /root/.bashrc; \
-  \
   # Create muhaki directories
   install -d -m 0755 -o muhaki -g muhaki "$MUHAKI"; \
   install -d -m 0755 -o muhaki -g muhaki "$MUHAKI_CONFIG"; \
   install -d -m 0755 -o muhaki -g muhaki "$MUHAKI_LOG"; \
-  \
   # Oh-My-Zsh
   su -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" -s /bin/sh muhaki; \
   su -c "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git /home/muhaki/.oh-my-zsh/custom/themes/powerlevel10k" -s /bin/sh muhaki; \
   su -c "git clone https://github.com/zsh-users/zsh-autosuggestions.git /home/muhaki/.oh-my-zsh/custom/plugins/zsh-autosuggestions" -s /bin/sh muhaki; \
   su -c "git clone https://github.com/TamCore/autoupdate-oh-my-zsh-plugins.git /home/muhaki/.oh-my-zsh/custom/plugins/autoupdate" -s /bin/sh muhaki; \
   sed -i 's|source $ZSH/oh-my-zsh.sh|source "$MUHAKI_CONFIG"/.muhakirc\nsource $ZSH/oh-my-zsh.sh|g' /home/muhaki/.zshrc; \
-  \
   # Change user shell
   sed -i "s|/home/muhaki:/sbin/nologin|/home/muhaki:/bin/zsh|g" /etc/passwd
 
@@ -92,17 +88,13 @@ RUN set -ex; \
   curl -sL https://github.com/cdr/code-server/releases/download/"$CODE_VERSION"/code-server-"$CODE_VERSION_NUMBER"-linux-amd64.tar.gz -o /tmp/code-server-"$CODE_VERSION"-linux-amd64.tar.gz; \
   tar -xzf /tmp/code-server-"$CODE_VERSION"-linux-amd64.tar.gz -C /tmp; \
   mv /tmp/code-server-"$CODE_VERSION_NUMBER"-linux-amd64 /usr/local/lib/code-server; \
-  \
   # Create code-server directories
   install -d -m 0755 -o muhaki -g muhaki "$MUHAKI_CODE_CONFIG"/data/User; \
   install -d -m 0755 -o muhaki -g muhaki "$MUHAKI_CODE_CONFIG"/extensions; \
-  \
   # Copy settings.json
   cp "$MUHAKI_CONFIG"/settings.json "$MUHAKI_CODE_CONFIG"/data/User/settings.json; \
-  \
   # Symlink code-server
   ln -s /usr/local/lib/code-server/bin/code-server /usr/local/bin/code-server; \
-  \
   # Install default extensions
   code-server --extensions-dir="$MUHAKI_CODE_CONFIG"/extensions \
   --install-extension=equinusocio.vsc-material-theme \
@@ -110,7 +102,6 @@ RUN set -ex; \
   --install-extension=remisa.shellman \
   --install-extension=ryu1kn.partial-diff \
   --install-extension=timonwong.shellcheck; \
-  \
   # Custom fonts
   sed -i "s|</head>|\
   <style> \n\
@@ -123,7 +114,6 @@ RUN set -ex; \
   url('https://muhaki.sh/fonts/meslolgs-nf-bold-italic.woff') format('woff'); \n\
   } \n\
   \n\</style></head>|g" /usr/local/lib/code-server/src/browser/pages/vscode.html; \
-  \
   # Finalize code-server
   chown -R muhaki:muhaki "$MUHAKI_CODE_CONFIG"; \
   chown -R muhaki:muhaki "$MUHAKI_CONFIG"; \
@@ -133,13 +123,10 @@ RUN set -ex; \
 RUN set -ex; \
   # ctop 
   cp "$MUHAKI_CONFIG"/ctop /home/muhaki/.ctop; \
-  \
   # sudo
   echo "muhaki ALL=(ALL) NOPASSWD: /usr/bin/apt" > /etc/sudoers.d/muhaki; \
-  \
   # Set ownership
   chown -R root:root /usr/local/bin; \
-  \
   # Cleanup
   rm -rf /var/lib/apt/lists/*; \
   rm -rf /tmp/*
