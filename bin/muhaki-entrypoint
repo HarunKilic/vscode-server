@@ -1,0 +1,9 @@
+#!/bin/bash
+set -euo pipefail
+
+# Support for old password variable
+[[ -n "${PASSWORD:-}" ]] && MUHAKI_CODE_PASSWORD="$PASSWORD"
+
+
+# Start code-server
+code-server /home/muhaki
