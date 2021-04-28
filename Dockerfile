@@ -22,6 +22,7 @@ RUN groupmod -g $DOCKER_HOST_GID docker && \
 
 # NPM: Packages
 RUN npm install -g webpack-cli create-react-app gatsby gulp pm2
+RUN pm2 install typescript
 
 # Shell: ZSH
 RUN apt install -y zsh && \
