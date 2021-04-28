@@ -5,7 +5,7 @@ ARG DEFAULT_USER
 # Update: System Packages
 RUN apt-get update && \
     apt-get upgrade -y && \
-    apt install -y ansible apt-transport-https build-essential ca-certificates chromium-browser ffmpeg gnupg-agent htop iputils-ping libffi-dev libssl-dev python3 python3-dev python3-pip ranger software-properties-common sshpass systemd tree unzip vim wget
+    apt install -y ansible apt-transport-https build-essential ca-certificates chromium-browser ffmpeg gnupg-agent htop iputils-ping libffi-dev libssl-dev python3 python3-dev python3-pip ranger software-properties-common sshpass systemd tree unzip vim wget pm2
 
 # Docker: Runtime
 RUN wget https://download.docker.com/linux/ubuntu/gpg -O docker.gpg && \
