@@ -1,6 +1,7 @@
 FROM linuxserver/code-server:amd64-latest
 ARG DOCKER_HOST_GID
 ARG DEFAULT_USER
+ARG PROXY_DOMAIN
 
 # Update: System Packages
 RUN apt-get update && \
