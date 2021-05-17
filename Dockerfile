@@ -66,6 +66,22 @@ RUN apt install -y clamav clamav-daemon && \
 # SEC: Hosts
 RUN wget https://someonewhocares.org/hosts/hosts -O /etc/hosts
 
+From this issues/24 and this issues/628
+
+You need to increase the fs.inotify.max_user_watchesparameter on the host. For example you can create a configuration file in /etc/sysctl.d. Example /etc/sysctl.d/crashplan.conf with content:
+
+fs.inotify.max_user_watches = 1048576
+You can not change at build time is it will not affect and also it will not allow you during build time.
+
+The workaround is to avoid getting this error, set it during run time in the entrypoint.
+
+FROM node:10.16
+
+# set inotify and start the node application, replace yar with your command
+RUN echo "fs.inotify.max_user_instances=524288" >> /etc/sysctl.conf
+RUN echo "fs.inotify.max_user_watches=524288" >> /etc/sysctl.conf
+RUN echo "fs.inotify.max_queued_events=524288" >> /etc/sysctl.conf
+
 # APT: Cleanup
 RUN apt-get clean
 
